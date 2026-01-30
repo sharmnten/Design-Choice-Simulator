@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Your Own Website</title>
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --text-color: #1a1a1a;
+            --bg-color: #ffffff;
+            --accent-color: #ff6b6b;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --heading-font: inherit;
+            --button-radius: 8px;
+            --button-padding: 12px 24px;
+            --shadow-blur: 10px;
+            --spacing-unit: 16px;
+            --letter-spacing: 0px;
+            --line-height: 1.6;
+            --font-weight-normal: 400;
+            --font-weight-bold: 700;
+            --decision-fatigue: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.6s ease, color 0.6s ease;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: var(--line-height);
+            letter-spacing: var(--letter-spacing);
+        }
+
+        /* Apply decision fatigue effects */
+        body.fatigued {
+            filter: brightness(calc(1 - var(--decision-fatigue) * 0.05)) contrast(calc(1 - var(--decision-fatigue) * 0.03)) saturate(calc(1 - var(--decision-fatigue) * 0.1));
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: calc(var(--spacing-unit) * 1.5);
+            box-shadow: 0 var(--shadow-blur) calc(var(--shadow-blur) * 2) rgba(0, 0, 0, 0.1);
+            transition: all 0.6s ease;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            font-family: var(--heading-font);
+        }
+
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-color);
+            padding: calc(var(--spacing-unit) * 0.75);
+            display: flex;
+            gap: calc(var(--spacing-unit) * 0.5);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.6s ease;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            border-radius: var(--button-radius);
+        }
+
+        nav button:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Main content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: calc(var(--spacing-unit) * 2);
+            transition: padding 0.6s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: calc(var(--spacing-unit) * 3);
+            padding: calc(var(--spacing-unit) * 2);
+            background: rgba(var(--primary-color), 0.05);
+            border-radius: 12px;
+            transition: all 0.6s ease;
+        }
+
+        .hero h2 {
+            font-size: 48px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 16px;
+            font-family: var(--heading-font);
+            transition: font-size 0.6s ease;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 24px;
+            opacity: 0.8;
+        }
+
+        /* Buttons */
+        button {
+            padding: var(--button-padding);
+            border: none;
+            border-radius: var(--button-radius);
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-weight: var(--font-weight-bold);
+            transition: all 0.3s ease;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Cards/Sections */
+        .section {
+            margin-bottom: calc(var(--spacing-unit) * 2);
+            padding: calc(var(--spacing-unit) * 2);
+            background: rgba(var(--primary-color), 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            transition: all 0.6s ease;
+        }
+
+        .section h3 {
+            font-size: 24px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 16px;
+            font-family: var(--heading-font);
+        }
+
+        /* Design Overlay - Game Screen */
+        .design-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 250;
+            pointer-events: all;
+            transition: opacity 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .design-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Choice Screen / Game Screen */
+        .choice-screen {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .choice-screen-header {
+            margin-bottom: 30px;
+        }
+
+        .choice-progress {
+            font-size: 12px;
+            color: #999;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .choice-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .choice-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.4s ease;
+        }
+
+        .choice-screen-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+
+        .choice-screen-description {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .choice-options {
+            margin-top: 30px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .choice-option-btn {
+            padding: 16px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #333;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .choice-option-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateX(4px);
+        }
+
+        .choice-option-btn:active {
+            transform: translateX(2px);
+        }
+
+        .choice-option-label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .choice-option-desc {
+            font-size: 12px;
+            color: #999;
+            font-weight: 400;
+        }
+
+        .finish-screen {
+            text-align: center;
+            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .finish-screen h2 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .finish-screen p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .finish-stats {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .stat:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            color: #333;
+            font-weight: 700;
+        }
+
+        .finish-button {
+            padding: 12px 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .finish-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .design-panel {
+                width: 100%;
+                max-width: 350px;
+            }
+
+            .hero h2 {
+                font-size: 32px;
+            }
+
+            main {
+                padding: calc(var(--spacing-unit) * 1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Game Overlay with Choice Screen -->
+    <div class="design-overlay" id="gameOverlay">
+        <div class="choice-screen" id="choiceScreen"></div>
+    </div>
+
+    <!-- Main Website (Behind the game) -->
+    <header>
+        <h1>Design Your Own Website</h1>
+        <p>Choose your design through this adventure—watch the site transform with each decision</p>
+    </header>
+
+    <nav>
+        <button onclick="alert('You designed this button, and it works!')">Home</button>
+        <button onclick="alert('This site is made of your choices.')">About</button>
+        <button onclick="alert('Everything here responds to your design decisions.')">Features</button>
+        <button onclick="alert('Click the ✏️ button to customize this entire website.')">Contact</button>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>Your Creative Vision</h2>
+            <p>Every color, font, and spacing choice you make updates this very site in real-time. You're not designing a mockup—you're designing the interface you're using right now.</p>
+            <button onclick="alert('This button\'s style changes as you customize the design!')">Explore Changes</button>
+        </section>
+
+        <section class="section">
+            <h3>Colors Define Mood</h3>
+            <p>Your choice of primary and secondary colors doesn't just look pretty—it fundamentally changes how you feel about the entire page. Notice how the header gradient, buttons, and links all adapt instantly.</p>
+            <button>Try It</button>
+        </section>
+
+        <section class="section">
+            <h3>Typography Sets Tone</h3>
+            <p>The font family you choose becomes the voice of this website. From elegant serif fonts to playful script styles, each selection changes the personality of every word on this page.</p>
+            <button>Keep Exploring</button>
+        </section>
+
+        <section class="section">
+            <h3>Spacing Creates Breathing Room</h3>
+            <p>Adjust padding and margins to control how claustrophobic or airy the site feels. More space = luxury and calm. Less space = intensity and focus. It's a powerful design lever.</p>
+            <button>Adjust Spacing</button>
+        </section>
+
+        <section class="section">
+            <h3>Shadows Add Depth</h3>
+            <p>From no shadow to dramatic depth, watch the visual hierarchy change. Buttons become more or less prominent, sections feel more or less elevated, all with a single adjustment.</p>
+            <button>Add Dimension</button>
+        </section>
+
+        <section class="section">
+            <h3>Decision Fatigue is Real</h3>
+            <p>As you make more choices, the interface subtly becomes slightly less vibrant. This isn't a bug—it's intentional. It represents the cognitive load of endless customization options. How does it feel?</p>
+            <button>Question Everything</button>
+        </section>
+    </main>
+
+    <script>
+        // Design configuration
+        const designChoices = [
+            {
+                id: 'primaryColor',
+                label: 'Primary Color',
+                note: 'Appears in headers, buttons, and links',
+                type: 'color',
+                options: ['#667eea', '#ff6b6b', '#ffd93d', '#6bcf7f', '#ff9f43', '#a29bfe', '#fd79a8', '#1e90ff'],
+                default: '#667eea'
+            },
+            {
+                id: 'secondaryColor',
+                label: 'Secondary Color',
+                note: 'Used in gradients and accents',
+                type: 'color',
+                options: ['#764ba2', '#ee5a6f', '#f7b731', '#48dbfb', '#ff6348', '#c44569', '#2ed573', '#0984e3'],
+                default: '#764ba2'
+            },
+            {
+                id: 'textColor',
+                label: 'Text Color',
+                note: 'Main body text and content',
+                type: 'color',
+                options: ['#1a1a1a', '#2d3436', '#34495e', '#000000', '#2c3e50', '#555555'],
+                default: '#1a1a1a'
+            },
+            {
+                id: 'bgColor',
+                label: 'Background Color',
+                note: 'Page background',
+                type: 'color',
+                options: ['#ffffff', '#f8f9fa', '#f0f0f0', '#fffbf0', '#f5f9ff', '#ffe5f0'],
+                default: '#ffffff'
+            },
+            {
+                id: 'accentColor',
+                label: 'Accent Color',
+                note: 'For highlights and special elements',
+                type: 'color',
+                options: ['#ff6b6b', '#ff9f43', '#ffd93d', '#a29bfe', '#74b9ff', '#fd79a8'],
+                default: '#ff6b6b'
+            },
+            {
+                id: 'fontFamily',
+                label: 'Font Family',
+                note: 'Changes the voice of the site',
+                type: 'select',
+                options: [
+                    { value: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', label: '🌐 Modern Sans' },
+                    { value: 'Georgia, serif', label: '🏛️ Elegant Serif' },
+                    { value: '"Courier New", monospace', label: '💻 Monospace Code' },
+                    { value: '"Comic Sans MS", cursive', label: '🎨 Playful Comic' },
+                    { value: 'Impact, sans-serif', label: '📢 Loud Impact' },
+                    { value: '"Times New Roman", serif', label: '📰 Classic Times' },
+                    { value: '"Trebuchet MS", sans-serif', label: '🌈 Friendly Trebuchet' }
+                ],
+                default: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+            },
+            {
+                id: 'headingFont',
+                label: 'Heading Font',
+                note: 'For h1, h2, h3 titles',
+                type: 'select',
+                options: [
+                    { value: 'inherit', label: '🔗 Same as Body' },
+                    { value: 'Georgia, serif', label: '🏛️ Elegant Serif' },
+                    { value: 'Impact, sans-serif', label: '📢 Bold Impact' },
+                    { value: '"Courier New", monospace', label: '💻 Monospace' }
+                ],
+                default: 'inherit'
+            },
+            {
+                id: 'buttonRadius',
+                label: 'Button Roundness',
+                note: 'From sharp to pill-shaped',
+                type: 'slider',
+                min: 0,
+                max: 50,
+                default: 8,
+                unit: 'px'
+            },
+            {
+                id: 'spacingUnit',
+                label: 'Spacing Scale',
+                note: 'Controls padding and gaps',
+                type: 'slider',
+                min: 8,
+                max: 32,
+                default: 16,
+                unit: 'px'
+            },
+            {
+                id: 'shadowBlur',
+                label: 'Shadow Softness',
+                note: 'Subtle to dramatic shadows',
+                type: 'slider',
+                min: 0,
+                max: 30,
+                default: 10,
+                unit: 'px'
+            },
+            {
+                id: 'letterSpacing',
+                label: 'Letter Spacing',
+                note: 'Condensed to spaced out',
+                type: 'slider',
+                min: 0,
+                max: 4,
+                default: 0,
+                step: 0.5,
+                unit: 'px'
+            },
+            {
+                id: 'lineHeight',
+                label: 'Line Height',
+                note: 'Text density and readability',
+                type: 'slider',
+                min: 1,
+                max: 2.5,
+                default: 1.6,
+                step: 0.1,
+                unit: ''
+            },
+            {
+                id: 'buttonPadding',
+                label: 'Button Size',
+                note: 'Tiny to chunky',
+                type: 'select',
+                options: [
+                    { value: '8px 12px', label: '🤏 Tiny' },
+                    { value: '10px 18px', label: '📌 Small' },
+                    { value: '12px 24px', label: '📘 Medium' },
+                    { value: '16px 32px', label: '📗 Large' },
+                    { value: '20px 40px', label: '🗃️ Extra Large' }
+                ],
+                default: '12px 24px'
+            },
+            {
+                id: 'fontWeightNormal',
+                label: 'Normal Font Weight',
+                note: 'Thin to bold body text',
+                type: 'select',
+                options: [
+                    { value: '300', label: '💫 Light' },
+                    { value: '400', label: '📝 Regular' },
+                    { value: '500', label: '📄 Medium' },
+                    { value: '600', label: '📋 Semibold' }
+                ],
+                default: '400'
+            },
+            {
+                id: 'fontWeightBold',
+                label: 'Bold Font Weight',
+                note: 'Emphasis and headlines',
+                type: 'select',
+                options: [
+                    { value: '600', label: '⚡ Semibold' },
+                    { value: '700', label: '💥 Bold' },
+                    { value: '800', label: '🔥 Extra Bold' },
+                    { value: '900', label: '💪 Black' }
+                ],
+                default: '700'
+            }
+        ];
+
+        // State
+        let state = {};
+        let changeCount = 0;
+        const totalChoices = designChoices.length;
+
+        // Initialize
+        function initDesignSystem() {
+            designChoices.forEach(choice => {
+                state[choice.id] = choice.default;
+            });
+            renderDesignPanel();
+            applyDesign();
+        }
+
+        // Render design panel
+        function renderDesignPanel() {
+            const container = document.getElementById('designChoices');
+            container.innerHTML = designChoices.map(choice => {
+                if (choice.type === 'color') {
+                    return `
+                        <div class="design-choice">
+                            <label class="design-choice-label">${choice.label}</label>
+                            <span class="design-choice-note">${choice.note}</span>
+                            <div class="color-picker">
+                                ${choice.options.map(color => `
+                                    <button 
+                                        class="color-swatch ${state[choice.id] === color ? 'selected' : ''}"
+                                        style="background-color: ${color}"
+                                        onclick="updateChoice('${choice.id}', '${color}')"
+                                        title="${color}"
+                                    ></button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else if (choice.type === 'select') {
+                    return `
+                        <div class="design-choice">
+                            <label class="design-choice-label">${choice.label}</label>
+                            <span class="design-choice-note">${choice.note}</span>
+                            <select class="select-input" onchange="updateChoice('${choice.id}', this.value)">
+                                ${choice.options.map(opt => `
+                                    <option value="${opt.value}" ${state[choice.id] === opt.value ? 'selected' : ''}>
+                                        ${opt.label}
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+                    `;
+                } else if (choice.type === 'slider') {
+                    return `
+                        <div class="design-choice">
+                            <label class="design-choice-label">${choice.label}</label>
+                            <span class="design-choice-note">${choice.note}</span>
+                            <div class="slider-wrapper">
+                                <input 
+                                    type="range" 
+                                    class="slider-input"
+                                    min="${choice.min}" 
+                                    max="${choice.max}"
+                                    step="${choice.step || 1}"
+                                    value="${state[choice.id]}"
+                                    oninput="updateChoice('${choice.id}', this.value)"
+                                >
+                                <span class="slider-value">${state[choice.id]}${choice.unit}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        // Update choice
+        function updateChoice(id, value) {
+            const oldValue = state[id];
+            if (oldValue !== value) {
+                state[id] = value;
+                changeCount++;
+                document.getElementById('changeCount').textContent = changeCount;
+                updateFatigueLevel();
+                applyDesign();
+                renderDesignPanel();
+            }
+        }
+
+        // Update fatigue level
+        function updateFatigueLevel() {
+            const fatiguePercent = Math.min((changeCount / totalChoices) * 100, 100);
+            document.documentElement.style.setProperty('--decision-fatigue', fatiguePercent / 100);
+            document.getElementById('fatigueLevel').textContent = Math.round(fatiguePercent) + '%';
+            
+            if (fatiguePercent > 30) {
+                document.body.classList.add('fatigued');
+            } else {
+                document.body.classList.remove('fatigued');
+            }
+        }
+
+        // Apply design to page
+        function applyDesign() {
+            const root = document.documentElement;
+            
+            root.style.setProperty('--primary-color', state.primaryColor);
+            root.style.setProperty('--secondary-color', state.secondaryColor);
+            root.style.setProperty('--text-color', state.textColor);
+            root.style.setProperty('--bg-color', state.bgColor);
+            root.style.setProperty('--accent-color', state.accentColor);
+            root.style.setProperty('--font-family', state.fontFamily);
+            root.style.setProperty('--heading-font', state.headingFont);
+            root.style.setProperty('--button-radius', state.buttonRadius + 'px');
+            root.style.setProperty('--button-padding', state.buttonPadding);
+            root.style.setProperty('--spacing-unit', state.spacingUnit + 'px');
+            root.style.setProperty('--shadow-blur', state.shadowBlur + 'px');
+            root.style.setProperty('--letter-spacing', state.letterSpacing + 'px');
+            root.style.setProperty('--line-height', state.lineHeight);
+            root.style.setProperty('--font-weight-normal', state.fontWeightNormal);
+            root.style.setProperty('--font-weight-bold', state.fontWeightBold);
+        }
+
+        // Toggle design panel
+        function toggleDesignPanel() {
+            const panel = document.getElementById('designPanel');
+            const overlay = document.getElementById('designOverlay');
+            panel.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Close design panel
+        function closeDesignPanel() {
+            document.getElementById('designPanel').classList.remove('open');
+            document.getElementById('designOverlay').classList.remove('active');
+        }
+
+        // Reset design
+        function resetDesign() {
+            if (confirm('Reset all design choices to defaults?')) {
+                changeCount = 0;
+                state = {};
+                designChoices.forEach(choice => {
+                    state[choice.id] = choice.default;
+                });
+                document.getElementById('changeCount').textContent = '0';
+                updateFatigueLevel();
+                applyDesign();
+                renderDesignPanel();
+            }
+        }
+
+        // Close panel when clicking outside
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('designPanel');
+            const toggle = document.querySelector('.design-toggle');
+            if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+                closeDesignPanel();
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('load', initDesignSystem);
+    </script>
+</body>
+</html>
